@@ -10,6 +10,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity(), FragmentInteractionListener {
     lateinit var addButton: ImageButton
@@ -32,9 +33,13 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
 
         addButton = findViewById(R.id.addButton)
         addButton.setOnClickListener {
-            showDialog();
+            sendToDB()
+           // showDialog();
            // addNewCardItem()
         }
+
+
+
 
     }
 
@@ -57,5 +62,16 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         dialog.show()
     }
 
+    fun sendToDB(){
+        val database = FirebaseDatabase.getInstance()
+        val reference=database.getReference("order")
+        val userText = "Ou May"
+        val userid = reference.push().key
+        val userReference = reference.child(userid.toString())
+
+        userReference.setValue(userText).addOnSuccessListener {
+            Toast.makeText(this, "Добавлено", Toast.LENGTH_LONG).show()
+        }
+    }
 
 }

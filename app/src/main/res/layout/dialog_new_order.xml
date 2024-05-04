@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="Введите название заказа"
+        android:hint="Введите название заказа"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="16dp" />
 
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="Введите Имя Заказчика"
+        android:hint="Введите Имя Заказчика"
         tools:layout_editor_absoluteX="21dp"
         tools:layout_editor_absoluteY="71dp" />
 
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="phone"
-        android:text="Введите номер телефона"
+        android:hint="Введите номер телефона"
         tools:layout_editor_absoluteX="28dp"
         tools:layout_editor_absoluteY="142dp" />
 
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
-        android:text="Цена за моделирование"
+        android:hint="Цена за моделирование"
         tools:layout_editor_absoluteX="21dp"
         tools:layout_editor_absoluteY="401dp" />
 
@@ -75,7 +75,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
-        android:text="Цена за печать"
+        android:hint="Цена за печать"
         tools:layout_editor_absoluteX="26dp"
         tools:layout_editor_absoluteY="485dp" />
 
@@ -85,7 +85,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
-        android:text="Аванс"
+        android:hint="Аванс"
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="594dp" />
 <LinearLayout
