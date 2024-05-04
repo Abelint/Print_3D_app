@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/etOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Введите название заказа"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/etName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="text"
+        android:text="Введите Имя Заказчика"
+        tools:layout_editor_absoluteX="21dp"
+        tools:layout_editor_absoluteY="71dp" />
+
+    <EditText
+        android:id="@+id/etPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="phone"
+        android:text="Введите номер телефона"
+        tools:layout_editor_absoluteX="28dp"
+        tools:layout_editor_absoluteY="142dp" />
+
+    <CheckBox
+        android:id="@+id/cbWhatsapp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Whatsapp"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="223dp" />
+
+    <CheckBox
+        android:id="@+id/cbTelegram"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Telegram"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="271dp" />
+
+    <CheckBox
+        android:id="@+id/cbPhone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Звонок"
+        tools:layout_editor_absoluteX="36dp"
+        tools:layout_editor_absoluteY="319dp" />
+
+    <EditText
+        android:id="@+id/etPriceModel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:text="Цена за моделирование"
+        tools:layout_editor_absoluteX="21dp"
+        tools:layout_editor_absoluteY="401dp" />
+
+    <EditText
+        android:id="@+id/etPricePrint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:text="Цена за печать"
+        tools:layout_editor_absoluteX="26dp"
+        tools:layout_editor_absoluteY="485dp" />
+
+    <EditText
+        android:id="@+id/etAvans"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="number"
+        android:text="Аванс"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="594dp" />
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Сохранить" />
+    <Button
+        android:id="@+id/buttonCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Отмена" />
+</LinearLayout>
+
+</LinearLayout>
