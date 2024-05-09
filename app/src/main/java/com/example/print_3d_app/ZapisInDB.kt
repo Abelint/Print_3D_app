@@ -3,7 +3,7 @@ package com.example.print_3d_app
 import kotlinx.serialization.Serializable
 
 @Serializable
-public class ZapisInDB( val numberTelephone: String?,
+public class ZapisInDB(val id: String, val numberTelephone: String?,
                       val nameMan: String? = null, val nameModel: String? = null, val chWhatsapp: Boolean
                       ,val chTelegram:Boolean, val chPhone:Boolean,val urlModel: String? = null
                       , val priceModeling: String? = null, val pricePrinting: String? = null

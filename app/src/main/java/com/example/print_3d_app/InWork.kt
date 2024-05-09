@@ -37,6 +37,7 @@ class InWork : Fragment() {
 
     private var counter = 0
 
+    private var notFirstStart :Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +54,6 @@ class InWork : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_in_work, container, false)
 
-        listView = view.findViewById(R.id.lvCards)
-        cardItems = mutableListOf()
-        cardAdapter = CardListAdapter(requireContext(), cardItems)
-        listView.adapter = cardAdapter
 
 
         return view
@@ -65,26 +62,51 @@ class InWork : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        listView = view.findViewById(R.id.lvCards)
+        cardItems = mutableListOf()
+        cardAdapter = CardListAdapter(requireContext(), cardItems)
+        listView.adapter = cardAdapter
+        Log.i("btnInWork","zdes " + "onViewCreated")
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        cardAdapter.notifyDataSetChanged()
+        Log.i("btnInWork","zdes " + "onResume")
+    }
     override fun onAttach(context: Context) {
         super.onAttach(context)
+
+        if(notFirstStart) return
         if (context is FragmentInteractionListener) {
             listener = context
         } else {
             throw RuntimeException("$context must implement FragmentInteractionListener")
         }
+
+        Log.i("btnInWork","zdes " + "onAttach")
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        Log.i("btnInWork","zdes " +"onDetach")
+    }
+    fun clearCards(){
+        cardItems.clear()
+        cardAdapter.notifyDataSetChanged()
+    }
 
     fun addNewCardItem(card : ZapisInDB) {
-        val newText = "Item ${cardItems.size + 1}"
-        val newCheckBox1Value = (0..1).random() == 1
-        val newCheckBox2Value = (0..1).random() == 1
-        val newCheckBox3Value = (0..1).random() == 1
+        Log.i("btnInWork","zdes " +"addNewCardItem")
 
-        val newCardItem = CardItem(newText, newCheckBox1Value, newCheckBox2Value, newCheckBox3Value)
+        val newText =  if(card.nameModel!= null) card.nameModel else "noName"
+        val newCheckBox1Value =  if(card.statusModeling!= null) card.statusModeling else false
+        val newCheckBox2Value = if(card.statusPrinting!= null) card.statusPrinting  else false
+        val newCheckBox3Value =  if(card.payment!= null) card.payment  else false
+        val newTelep =  if(card.numberTelephone!= null) card.numberTelephone else ""
+        if(newCheckBox1Value && newCheckBox2Value && newCheckBox3Value) return
+        val newCardItem = CardItem(card.id,newText,newTelep, newCheckBox1Value, newCheckBox2Value, newCheckBox3Value)
         cardItems.add(newCardItem)
         cardAdapter.notifyDataSetChanged()
     }

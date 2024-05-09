@@ -5,8 +5,11 @@ import android.util.AttributeSet
 import android.view.View
 
 data class CardItem(
+    val id:String,
     val text: String,
-    val checkBox1Value: Boolean,
+    val numberTelephone : String,
+    var checkBox1Value: Boolean,
     val checkBox2Value: Boolean,
     val checkBox3Value: Boolean
+
 )

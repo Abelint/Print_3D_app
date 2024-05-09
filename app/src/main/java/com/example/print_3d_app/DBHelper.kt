@@ -114,11 +114,30 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     }
 
+    fun updateZapis(id: String, columnName:String, value:String){
+        val db = this.writableDatabase
+        val contentValues = ContentValues().apply {
+            put(columnName, value)
+        }
+
+        val selection = "rowid = ?"
+        val selectionArgs = arrayOf(id.toString())
+
+        val rowsUpdated = db.update(TABLE_NAME, contentValues, selection, selectionArgs)
+
+        if (rowsUpdated > 0) {
+            println("Значение в столбце $columnName было успешно обновлено для строки $id")
+        } else {
+            println("Не удалось обновить значение в столбце $columnName для строки $id")
+        }
+        db.close()
+    }
+
     companion object{
         // here we have defined variables for our database
 
         // below is variable for database name
-        private val DATABASE_NAME = "GEEKS_FOR_GEEKS1.db"
+        private val DATABASE_NAME = "ORDERS.db"
 
         // below is the variable for database version
         private val DATABASE_VERSION = 1

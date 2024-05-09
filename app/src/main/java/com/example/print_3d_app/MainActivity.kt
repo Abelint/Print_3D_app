@@ -2,6 +2,8 @@ package com.example.print_3d_app
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -11,8 +13,10 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -39,7 +43,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
     lateinit var addButton: ImageButton
     private lateinit var database: DatabaseReference
     private lateinit var fragmentInWork: InWork
-    private lateinit var listOfOrders: MutableList<ZapisInDB>
+    private var listOfOrders: MutableList<ZapisInDB> = mutableListOf()
 
 
     suspend fun getMessage() : String{
@@ -51,69 +55,111 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork()).commit()
+
+        val header = findViewById<LinearLayout>(R.id.include) // лютый костылище
+        header.visibility = View.INVISIBLE
+
+
+        supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork()).addToBackStack(null).commit()
 
         val btnInWork: Button = findViewById(R.id.btn_inwork)
-        btnInWork.setOnClickListener {
-            addButton.visibility = View.VISIBLE
-            supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork())
-                .commit()
-        }
         val btnArchive: Button = findViewById(R.id.btn_archive)
+
+        var isFragmentOneDisplayed = false
+        btnInWork.setOnClickListener {
+
+            Log.i("btnInWork","zdes " + isFragmentOneDisplayed.toString())
+            addButton.visibility = View.VISIBLE
+
+            supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork())
+                .addToBackStack(null)
+                .commit()
+
+
+            /*
+            supportFragmentManager.s
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.frameForFragment, InWork())
+            transaction.addToBackStack(null)
+            transaction.commit()
+
+             */
+        }
+
         btnArchive.setOnClickListener {
             addButton.visibility = View.INVISIBLE
-            supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, Archiv())
-                .commit()
+
+            val transaction = supportFragmentManager.beginTransaction()
+            transaction.replace(R.id.frameForFragment, Archiv())
+            transaction.addToBackStack("Archiv")
+            transaction.commit()
         }
+
+
 
 
         addButton = findViewById(R.id.addButton)
         addButton.setOnClickListener {
 
-            val db = DBHelper(this, null)
-            val zap = ZapisInDB( Random(100).nextInt().toString(),"nameMan", "nameModel",  true, false
-                ,  true, "urlModel",  "priceModeling", "pricePrinting"
-                , "avans", true, false, false)
-            db.addZapis(zap)
-          //  db.addZapisQuery(zap)
-            // Toast to message on the screen
-            Toast.makeText(this, "Запись добавлена", Toast.LENGTH_LONG).show()
-
-             Thread.sleep(100)
-
-            val cursor = db.getName()
-
-            var fff =""
-            cursor!!.moveToFirst()
-            fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
-            fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
-
-            // moving our cursor to next
-            // position and appending values
-            while(cursor.moveToNext()){
-                fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
-                fff += cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
-            }
-
-            // at last we close our cursor
-            cursor.close()
-
-            Log.i("query fff", fff)
-            addNewCardItem(zap)
-           // showDialog();
-           // getFromDB()
-            /*
-
-            getFromDB()
-
-            addNewCardItem()
-
-             */
+            showDialog()
             // database = Firebase.database.reference
             // writeFirebase(database)
             // readFirebase(database)
 
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        ShowActuallyOrders()
+
+    }
+
+    @SuppressLint("Range")
+    fun ShowActuallyOrders(){
+        listOfOrders.clear()
+        // Получите ссылку на фрагмент
+        fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragment) as InWork
+        // Вызовите функцию addNewCardItem() из фрагмента
+        fragmentInWork.clearCards()
+
+        val db = DBHelper(this, null)
+           val cursor = db.getName()
+
+           var fff =""
+           cursor!!.moveToFirst()
+          // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
+          // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
+
+           // moving our cursor to next
+           // position and appending values
+           while(cursor.moveToNext()){
+              val zap = ZapisInDB( cursor.getString(0) ,
+                  cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
+                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
+                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[2])),
+                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[3])).toBoolean(),
+                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[4])).toBoolean(),
+                                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[5])).toBoolean(),
+                                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[6])),
+                                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[7])),
+                                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[8])),
+                                                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[9])),
+                                                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[10])).toBoolean(),
+                                                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[11])).toBoolean(),
+                                                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[12])).toBoolean())
+               listOfOrders.add(zap)
+               addNewCardItem(zap)
+           }
+
+           // at last we close our cursor
+           cursor.close()
+
+           Log.i("query fff", fff)
+
+
+
     }
 
     override fun addNewCardItem(card : ZapisInDB) {
@@ -122,6 +168,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragment) as InWork
         // Вызовите функцию addNewCardItem() из фрагмента
         fragmentInWork.addNewCardItem(card)
+
 
     }
 
@@ -146,7 +193,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
             val etAvans = dialog.findViewById<EditText>(R.id.etAvans)
 
 
-            val newOrder = ZapisInDB(
+            val newOrder = ZapisInDB("-1",
                 telephoneNumber.text.toString(),
                 nameZakazchik.text.toString(),
                 order.text.toString(),
@@ -162,7 +209,17 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
                 false
             )
 
-            //addNewCardItem(newOrder)
+            val db = DBHelper(this, null)
+
+            db.addZapis(newOrder)
+            db.close()
+            //  db.addZapisQuery(zap)
+            // Toast to message on the screen
+            Toast.makeText(this, "Запись добавлена", Toast.LENGTH_LONG).show()
+            Thread.sleep(50)
+
+            ShowActuallyOrders()
+
            // sendToDB(newOrder)
             // getFromDB()
              dialog.dismiss()
@@ -243,10 +300,10 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
                     if (zapis.containsKey("payment")) zapis.get("payment").toBoolean()
                     else false
 
-                val zapisFromDB = ZapisInDB(numberTelephone,nameMan,nameModel,chWhatsapp,chTelegram, chPhone, urlModel,priceModeling,pricePrinting,avans,statusModeling,statusPrinting,payment)
-                listFromDB.add(zapisFromDB)
-                listOfOrders.add(zapisFromDB)
-                addNewCardItem(zapisFromDB)
+                //val zapisFromDB = ZapisInDB(numberTelephone,nameMan,nameModel,chWhatsapp,chTelegram, chPhone, urlModel,priceModeling,pricePrinting,avans,statusModeling,statusPrinting,payment)
+               // listFromDB.add(zapisFromDB)
+                //listOfOrders.add(zapisFromDB)
+                //addNewCardItem(zapisFromDB)
                 Log.i("listFromDB", "Add value ${listFromDB.count()}")
 
             }
