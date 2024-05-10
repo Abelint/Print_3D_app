@@ -12,6 +12,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -56,26 +57,30 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val header = findViewById<LinearLayout>(R.id.include) // лютый костылище
-        header.visibility = View.INVISIBLE
+        //val header = findViewById<LinearLayout>(R.id.include) // лютый костылище
+      //  header.visibility = View.INVISIBLE
 
 
-        supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork()).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.frameForFragmentInWork, InWork()).addToBackStack(null).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.frameForFragmentArchive, Archiv()).addToBackStack(null).commit()
+        findViewById<FrameLayout>(R.id.frameForFragmentArchive).visibility = View.INVISIBLE
 
         val btnInWork: Button = findViewById(R.id.btn_inwork)
         val btnArchive: Button = findViewById(R.id.btn_archive)
 
-        var isFragmentOneDisplayed = false
+
         btnInWork.setOnClickListener {
 
-            Log.i("btnInWork","zdes " + isFragmentOneDisplayed.toString())
-            addButton.visibility = View.VISIBLE
 
-            supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, InWork())
+            addButton.visibility = View.VISIBLE
+           // supportFragmentManager.beginTransaction().remove(InWork()).commitNow()
+            /*
+            supportFragmentManager.beginTransaction().replace(R.id.frameForFragment, fragmentInWork)
                 .addToBackStack(null)
                 .commit()
-
-
+*/
+            findViewById<FrameLayout>(R.id.frameForFragmentInWork).visibility = View.VISIBLE
+            findViewById<FrameLayout>(R.id.frameForFragmentArchive).visibility = View.INVISIBLE
             /*
             supportFragmentManager.s
             val transaction = supportFragmentManager.beginTransaction()
@@ -87,12 +92,17 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         }
 
         btnArchive.setOnClickListener {
-            addButton.visibility = View.INVISIBLE
 
+            addButton.visibility = View.INVISIBLE
+            findViewById<FrameLayout>(R.id.frameForFragmentInWork).visibility = View.INVISIBLE
+            findViewById<FrameLayout>(R.id.frameForFragmentArchive).visibility = View.VISIBLE
+/*
             val transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.frameForFragment, Archiv())
             transaction.addToBackStack("Archiv")
             transaction.commit()
+
+*/
         }
 
 
@@ -118,9 +128,12 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
 
     @SuppressLint("Range")
     fun ShowActuallyOrders(){
+
+        Log.i("btnInWork","zdes " + "ShowActuallyOrders " )
+
         listOfOrders.clear()
         // Получите ссылку на фрагмент
-        fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragment) as InWork
+        fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragmentInWork) as InWork
         // Вызовите функцию addNewCardItem() из фрагмента
         fragmentInWork.clearCards()
 
@@ -165,7 +178,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
     override fun addNewCardItem(card : ZapisInDB) {
 
         // Получите ссылку на фрагмент
-        fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragment) as InWork
+        fragmentInWork = supportFragmentManager.findFragmentById(R.id.frameForFragmentInWork) as InWork
         // Вызовите функцию addNewCardItem() из фрагмента
         fragmentInWork.addNewCardItem(card)
 

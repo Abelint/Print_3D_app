@@ -9,11 +9,20 @@
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="В работе"/>
+        android:text="В работе"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="2dp"
+        />
     <Button
         android:id="@+id/btn_archive"
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="Архив"/>
+        android:text="Архив"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="4dp"/>
 </LinearLayout>

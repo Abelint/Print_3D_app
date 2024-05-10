@@ -1,5 +1,6 @@
 package com.example.print_3d_app
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -45,7 +46,7 @@ class InWork : Fragment() {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
-
+        Log.i("btnInWork","zdes " + "onCreate")
     }
 
     override fun onCreateView(
@@ -54,7 +55,7 @@ class InWork : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_in_work, container, false)
 
-
+        Log.i("btnInWork","zdes " + "onCreateView")
 
         return view
     }
@@ -66,13 +67,19 @@ class InWork : Fragment() {
         cardItems = mutableListOf()
         cardAdapter = CardListAdapter(requireContext(), cardItems)
         listView.adapter = cardAdapter
-        Log.i("btnInWork","zdes " + "onViewCreated")
+        if(cardAdapter != null) {
+            Log.i("btnInWork","zdes " + "onViewCreated " +
+                    cardAdapter.toString() + "   "+ cardItems.count())}
+        Log.i("btnInWork","zdes " + "onViewCreated " )
     }
 
     override fun onResume() {
-        super.onResume()
 
-        cardAdapter.notifyDataSetChanged()
+        super.onResume()
+        if(cardAdapter != null) {
+            Log.i("btnInWork","zdes " + "onViewCreated " +
+                    cardAdapter.toString() + "   "+ cardItems.count())}
+
         Log.i("btnInWork","zdes " + "onResume")
     }
     override fun onAttach(context: Context) {
@@ -88,6 +95,35 @@ class InWork : Fragment() {
         Log.i("btnInWork","zdes " + "onAttach")
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        Log.i("btnInWork","zdes " + "onActivityCreated")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i("btnInWork","zdes " + "onStart")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i("btnInWork","zdes " + "onStart")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i("btnInWork","zdes " + "onStop")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.i("btnInWork","zdes " + "onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i("btnInWork","zdes " + "onDestroy")
+    }
     override fun onDetach() {
         super.onDetach()
         Log.i("btnInWork","zdes " +"onDetach")
@@ -95,6 +131,49 @@ class InWork : Fragment() {
     fun clearCards(){
         cardItems.clear()
         cardAdapter.notifyDataSetChanged()
+    }
+
+    @SuppressLint("Range")
+    fun reloadCards(){
+        Log.i("btnInWork","zdes " + "ShowActuallyOrders " )
+
+      clearCards()
+
+        val db = DBHelper(requireContext(), null)
+        val cursor = db.getName()
+
+        var fff =""
+        cursor!!.moveToFirst()
+        // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
+        // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
+
+        // moving our cursor to next
+        // position and appending values
+        while(cursor.moveToNext()){
+            val zap = ZapisInDB( cursor.getString(0) ,
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[2])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[3])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[4])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[5])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[6])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[7])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[8])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[9])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[10])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[11])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[12])).toBoolean())
+
+            addNewCardItem(zap)
+        }
+
+        // at last we close our cursor
+        cursor.close()
+
+        Log.i("query fff", fff)
+
+
     }
 
     fun addNewCardItem(card : ZapisInDB) {
@@ -110,6 +189,8 @@ class InWork : Fragment() {
         cardItems.add(newCardItem)
         cardAdapter.notifyDataSetChanged()
     }
+
+
 
 
     companion object {

@@ -2,8 +2,9 @@ package com.example.print_3d_app
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.NameNotFoundException
 import android.net.Uri
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -50,6 +51,51 @@ class CardListAdapter(private val context: Context, private val cardItems: List<
 
         // Установка данных или обработка нажатий для каждого элемента
         var currentItem = cardItems[position]
+        imageButton1.setOnClickListener {
+
+            val appName = "com.whatsapp"
+            val isAppInstalled: Boolean =
+                isAppAvailable(context.getApplicationContext(), appName)
+            if (isAppInstalled) {
+                val myIntent = Intent(Intent.ACTION_SEND)
+                myIntent.setType("text/plain")
+                myIntent.setPackage(appName)
+                myIntent.putExtra(Intent.EXTRA_TEXT, "Здравствуйте\nИзделие готово\n3Д печать") //
+                context.startActivity(Intent.createChooser(myIntent, "Share with"))
+            } else {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "Здравствуйте\nИзделие готово\n3Д печать")
+                    type = "text/plain" //для URL можно использовать text/x-uri
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)
+            }
+        }
+
+        imageButton2.setOnClickListener {
+
+            val appName = "org.telegram.messenger"
+            val isAppInstalled: Boolean =
+                isAppAvailable(context.getApplicationContext(), appName)
+            if (isAppInstalled) {
+                val myIntent = Intent(Intent.ACTION_SEND)
+                myIntent.setType("text/plain")
+                myIntent.setPackage(appName)
+                myIntent.putExtra(Intent.EXTRA_TEXT, "Здравствуйте\nИзделие готово\n3Д печать") //
+                context.startActivity(Intent.createChooser(myIntent, "Share with"))
+            } else {
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, "Здравствуйте\nИзделие готово\n3Д печать")
+                    type = "text/plain" //для URL можно использовать text/x-uri
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                context.startActivity(shareIntent)
+            }
+        }
 
         imageButton3.setOnClickListener {
             val intent = Intent(Intent.ACTION_DIAL).apply {
@@ -85,4 +131,14 @@ class CardListAdapter(private val context: Context, private val cardItems: List<
 
         return view!!
     }
+    fun isAppAvailable(context: Context, appName: String?): Boolean {
+        val pm = context.packageManager
+        return try {
+            pm.getPackageInfo(appName!!, PackageManager.GET_ACTIVITIES)
+            true
+        } catch (e: NameNotFoundException) {
+            false
+        }
+    }
+
 }
