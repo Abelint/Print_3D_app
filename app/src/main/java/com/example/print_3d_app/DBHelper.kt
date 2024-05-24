@@ -1,11 +1,13 @@
 package com.example.print_3d_app
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.util.Log
+import android.widget.Toast
 
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
@@ -107,17 +109,32 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     fun getName(): Cursor? {
 
         val db = this.readableDatabase
-
+        Log.i("btnInWork","zdes " + "ShowActuallyOrders getName " + TABLE_NAME )
         // below code returns a cursor to
         // read data from the database
         return db.rawQuery("SELECT * FROM " + TABLE_NAME, null)
 
     }
 
-    fun updateZapis(id: String, columnName:String, value:String){
+    fun updateZapis(id: String, zapis: ZapisInDB){
         val db = this.writableDatabase
+
         val contentValues = ContentValues().apply {
-            put(columnName, value)
+
+            put(ConstantsDB.columnList[0], zapis.numberTelephone)
+            put(ConstantsDB.columnList[1], zapis.nameMan)
+            put(ConstantsDB.columnList[2], zapis.nameModel)
+            put(ConstantsDB.columnList[3], zapis.chWhatsapp)
+            put(ConstantsDB.columnList[4], zapis.chTelegram )
+            put(ConstantsDB.columnList[5], zapis.chPhone)
+            put(ConstantsDB.columnList[6], zapis.urlModel)
+            put(ConstantsDB.columnList[7], zapis.priceModeling)
+            put(ConstantsDB.columnList[8], zapis.pricePrinting)
+            put(ConstantsDB.columnList[9], zapis.avans)
+            put(ConstantsDB.columnList[10], zapis.statusModeling)
+            put(ConstantsDB.columnList[11], zapis.statusPrinting)
+            put(ConstantsDB.columnList[12], zapis.payment)
+            put(ConstantsDB.columnList[13], zapis.date)
         }
 
         val selection = "rowid = ?"
@@ -126,32 +143,115 @@ class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         val rowsUpdated = db.update(TABLE_NAME, contentValues, selection, selectionArgs)
 
         if (rowsUpdated > 0) {
-            println("Значение в столбце $columnName было успешно обновлено для строки $id")
+            Log.i("updateZapis", "Значение успешно обновлено для строки $id")
         } else {
-            println("Не удалось обновить значение в столбце $columnName для строки $id")
+            Log.i("updateZapis","Не удалось обновить значение для строки $id")
         }
         db.close()
+    }
+    fun updateZapis(id: String, columnName: String, value : String) {
+        val contentValues = ContentValues().apply {
+            put(columnName, value)
+        }
+        val db = this.writableDatabase
+        db.update(ConstantsDB.TABLE_NAME, contentValues, ConstantsDB._ID +" = ?", arrayOf(id.toString())) // Замените на имя вашей таблицы и нужное условие
+        db.close()
+    }
+
+    @SuppressLint("Range")
+    fun getAllZapis() : List<ZapisInDB>{
+        val list = mutableListOf<ZapisInDB>()
+        val cursor = this.getName()
+
+        var fff =""
+        cursor!!.moveToFirst()
+        // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
+        // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
+
+        // moving our cursor to next
+        // position and appending values
+        while(cursor.moveToNext()){
+            val zap = ZapisInDB( cursor.getString(0) ,
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[2])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[3])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[4])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[5])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[6])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[7])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[8])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[9])),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[10])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[11])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[12])).toBoolean(),
+                cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[13])))
+            list.add(zap)
+        }
+
+        // at last we close our cursor
+        cursor.close()
+        return list
+    }
+
+
+
+    @SuppressLint("Range")
+    fun gatZapisById(id : Int) : ZapisInDB {
+
+Log.i("gatZapisById", id.toString())
+        val db = this.readableDatabase
+
+        val cursor = db.query(
+            TABLE_NAME, // Замените на имя вашей таблицы
+            null,
+            ConstantsDB._ID+" = ?",
+            arrayOf(id.toString()),
+            null,
+            null,
+            null
+        )
+        var result: String? = null
+
+        if (cursor.moveToFirst()) {
+            result = cursor.getString(cursor.getColumnIndex("numberTelephone")) // Замените на имя нужного столбца
+        }
+
+        val zap = ZapisInDB( cursor.getString(0) ,
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[2])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[3])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[4])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[5])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[6])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[7])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[8])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[9])),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[10])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[11])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[12])).toBoolean(),
+            cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[13])))
+
+        cursor.close()
+        db.close()
+
+        return zap
     }
 
     companion object{
         // here we have defined variables for our database
 
         // below is variable for database name
-        private val DATABASE_NAME = "ORDERS.db"
+        private val DATABASE_NAME = ConstantsDB.DB_NAME
 
         // below is the variable for database version
-        private val DATABASE_VERSION = 1
+        private val DATABASE_VERSION = ConstantsDB.DB_VER
 
         // below is the variable for table name
-        val TABLE_NAME = "print"
+        val TABLE_NAME = ConstantsDB.TABLE_NAME
 
-        // below is the variable for id column
-        val ID_COL = "id"
 
-        // below is the variable for name column
-        val NAME_COl = "name"
 
-        // below is the variable for age column
-        val AGE_COL = "age"
     }
 }

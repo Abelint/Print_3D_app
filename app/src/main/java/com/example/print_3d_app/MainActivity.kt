@@ -7,6 +7,8 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -40,7 +42,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import java.util.UUID
 import kotlin.random.Random
 
-class MainActivity : AppCompatActivity(), FragmentInteractionListener {
+class MainActivity : AppCompatActivity(), FragmentInteractionListener, CardListAdapter.CardItemLongClickListener {
     lateinit var addButton: ImageButton
     private lateinit var database: DatabaseReference
     private lateinit var fragmentInWork: InWork
@@ -56,9 +58,6 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //val header = findViewById<LinearLayout>(R.id.include) // лютый костылище
-      //  header.visibility = View.INVISIBLE
 
 
         supportFragmentManager.beginTransaction().replace(R.id.frameForFragmentInWork, InWork()).addToBackStack(null).commit()
@@ -81,14 +80,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
 */
             findViewById<FrameLayout>(R.id.frameForFragmentInWork).visibility = View.VISIBLE
             findViewById<FrameLayout>(R.id.frameForFragmentArchive).visibility = View.INVISIBLE
-            /*
-            supportFragmentManager.s
-            val transaction = supportFragmentManager.beginTransaction()
-            transaction.replace(R.id.frameForFragment, InWork())
-            transaction.addToBackStack(null)
-            transaction.commit()
 
-             */
         }
 
         btnArchive.setOnClickListener {
@@ -119,6 +111,7 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
 
@@ -126,7 +119,6 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
 
     }
 
-    @SuppressLint("Range")
     fun ShowActuallyOrders(){
 
         Log.i("btnInWork","zdes " + "ShowActuallyOrders " )
@@ -138,41 +130,11 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         fragmentInWork.clearCards()
 
         val db = DBHelper(this, null)
-           val cursor = db.getName()
 
-           var fff =""
-           cursor!!.moveToFirst()
-          // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])) + "\n"
-          // fff+=cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])) + "\n"
-
-           // moving our cursor to next
-           // position and appending values
-           while(cursor.moveToNext()){
-              val zap = ZapisInDB( cursor.getString(0) ,
-                  cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
-                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
-                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[2])),
-                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[3])).toBoolean(),
-                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[4])).toBoolean(),
-                                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[5])).toBoolean(),
-                                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[6])),
-                                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[7])),
-                                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[8])),
-                                                   cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[9])),
-                                                       cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[10])).toBoolean(),
-                                                           cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[11])).toBoolean(),
-                                                               cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[12])).toBoolean())
-               listOfOrders.add(zap)
-               addNewCardItem(zap)
-           }
-
-           // at last we close our cursor
-           cursor.close()
-
-           Log.i("query fff", fff)
-
-
-
+          for(zap in db.getAllZapis()){
+              listOfOrders.add(zap)
+              addNewCardItem(zap)
+          }
     }
 
     override fun addNewCardItem(card : ZapisInDB) {
@@ -193,6 +155,11 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
 
         val butSave = dialog.findViewById<Button>(R.id.buttonSave)
         val butCancel = dialog.findViewById<Button>(R.id.buttonCancel)
+
+
+
+
+
 
         butSave.setOnClickListener {
             val telephoneNumber = dialog.findViewById<EditText>(R.id.etPhone)
@@ -326,6 +293,11 @@ class MainActivity : AppCompatActivity(), FragmentInteractionListener {
         }
         Log.i("listFromDB", "Got value ${listFromDB.count()}")
         return listFromDB
+    }
+
+    override fun onCardItemLongClicked(position: Int, message: String) {
+        // здесь показывать заполненный диалог
+        Toast.makeText(this,message,Toast.LENGTH_LONG).show()
     }
 
 }

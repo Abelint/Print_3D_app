@@ -9,9 +9,24 @@ public class ZapisInDB(val id: String, val numberTelephone: String?,
                       , val priceModeling: String? = null, val pricePrinting: String? = null
                       , val avans: String? = null
                       , val statusModeling: Boolean? = null, val statusPrinting: Boolean? = null
-                      , val payment: Boolean? = null) {
-    // Null default values create a no-argument default constructor, which is needed
-    // for deserialization from a DataSnapshot.
+                      , val payment: Boolean? = null, val date: String?= null) {
+    /*
+    val ID get() = id
+    val NumberTelephone get() = numberTelephone
+    val NameMan get() = nameMan
+    val NameModel get() = nameModel
+    val ChWhatsapp get() = chWhatsapp
+    val ChTelegram get() = chTelegram
+    val ChPhone get() = chPhone
+    val UrlModel get() = urlModel
+    val PriceModeling get() = priceModeling
+    val PricePrinting get() = pricePrinting
+    val Avans get() = avans
+    val StatusModeling get() = statusModeling
+    val StatusPrinting get() = statusPrinting
+    val Payment get() = payment
+
+*/
 
 
 }

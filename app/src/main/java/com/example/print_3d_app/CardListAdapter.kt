@@ -1,5 +1,6 @@
 package com.example.print_3d_app
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,16 +10,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.BaseAdapter
+import android.widget.Button
 import android.widget.CheckBox
+import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.startActivity
+import java.util.Calendar
 
 
 class CardListAdapter(private val context: Context, private val cardItems: List<CardItem>) : BaseAdapter() {
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+    // В классе CardListAdapter добавляем интерфейс для обработки длительного нажатия
+    interface CardItemLongClickListener {
+        fun onCardItemLongClicked(position: Int, message: String)
+    }
 
     override fun getCount(): Int {
         return cardItems.size
@@ -46,11 +56,23 @@ class CardListAdapter(private val context: Context, private val cardItems: List<
         val checkBox1: CheckBox = view?.findViewById(R.id.chb_model)?: CheckBox(context)
         val checkBox2: CheckBox = view?.findViewById(R.id.chb_print)?: CheckBox(context)
         val checkBox3: CheckBox = view?.findViewById(R.id.chb_payment)?: CheckBox(context)
+        val llCard : LinearLayout = view?.findViewById(R.id.llOneCard)?:LinearLayout(context)
+
 
 
 
         // Установка данных или обработка нажатий для каждого элемента
         var currentItem = cardItems[position]
+
+        llCard.setOnLongClickListener {
+           val str : String = "sdfgvsdv  " + currentItem.id
+            Toast.makeText(context,str, Toast.LENGTH_LONG).show()
+            (context as? CardItemLongClickListener)?.onCardItemLongClicked(position, str)
+
+            showDialog(currentItem)
+            return@setOnLongClickListener true
+        }
+
         imageButton1.setOnClickListener {
 
             val appName = "com.whatsapp"
@@ -139,6 +161,85 @@ class CardListAdapter(private val context: Context, private val cardItems: List<
         } catch (e: NameNotFoundException) {
             false
         }
+    }
+
+    fun showDialog(card : CardItem) {
+        val dialog: Dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setCancelable(true)
+        dialog.setContentView(R.layout.dialog_new_order)
+
+        val butSave = dialog.findViewById<Button>(R.id.buttonSave)
+        val butCancel = dialog.findViewById<Button>(R.id.buttonCancel)
+
+        val telephoneNumber = dialog.findViewById<EditText>(R.id.etPhone)
+        val order = dialog.findViewById<EditText>(R.id.etOrder)
+        val nameZakazchik = dialog.findViewById<EditText>(R.id.etName)
+        val cbWhatsApp = dialog.findViewById<CheckBox>(R.id.cbWhatsapp)
+        val cbTelegram = dialog.findViewById<CheckBox>(R.id.cbTelegram)
+        val cbPhone = dialog.findViewById<CheckBox>(R.id.cbPhone)
+        val etPriceModel = dialog.findViewById<EditText>(R.id.etPriceModel)
+        val etPricePrint = dialog.findViewById<EditText>(R.id.etPricePrint)
+        val etAvans = dialog.findViewById<EditText>(R.id.etAvans)
+
+        val db = DBHelper(context, null)
+        var zapis = db.gatZapisById(card.id.toInt())
+
+        telephoneNumber.setText(zapis.numberTelephone)
+        order.setText(zapis.nameModel)
+        nameZakazchik.setText(zapis.nameMan)
+        cbWhatsApp.isChecked = zapis.chWhatsapp
+        cbTelegram.isChecked = zapis.chTelegram
+        cbPhone.isChecked = zapis.chPhone
+        etPriceModel.setText(zapis.priceModeling)
+        etPricePrint.setText(zapis.pricePrinting)
+        etAvans.setText(zapis.avans)
+
+
+
+        butSave.setOnClickListener {
+
+
+            val newOrder = ZapisInDB("-1",
+                telephoneNumber.text.toString(),
+                nameZakazchik.text.toString(),
+                order.text.toString(),
+                cbWhatsApp.isChecked,
+                cbTelegram.isChecked,
+                cbPhone.isChecked,
+                "",
+                etPriceModel.text.toString(),
+                etPricePrint.text.toString(),
+                etAvans.text.toString(),
+                false,
+                false,
+                false,
+               Calendar.getInstance().time.toString()
+            )
+
+
+
+            db.updateZapis(card.id, newOrder)//////////////здесь update
+            db.close()
+            //  db.addZapisQuery(zap)
+            // Toast to message on the screen
+            Toast.makeText(context, "Запись обновлена", Toast.LENGTH_LONG).show()
+            Thread.sleep(50)
+
+            for (i in 0..cardItems.count()-1) {
+                if(cardItems[i].id == card.id){
+                    cardItems[i].text = newOrder.nameModel.toString()
+                    this.notifyDataSetChanged()
+                    break
+                }
+            }
+
+            // sendToDB(newOrder)
+            // getFromDB()
+            dialog.dismiss()
+
+        }
+        dialog.show()
     }
 
 }

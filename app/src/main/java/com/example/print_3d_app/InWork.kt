@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.GestureDetector
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -13,6 +15,7 @@ import android.widget.CheckBox
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ListView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 
 // TODO: Rename parameter arguments, choose names that match
@@ -39,6 +42,8 @@ class InWork : Fragment() {
     private var counter = 0
 
     private var notFirstStart :Boolean = false
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,8 +97,10 @@ class InWork : Fragment() {
             throw RuntimeException("$context must implement FragmentInteractionListener")
         }
 
+
         Log.i("btnInWork","zdes " + "onAttach")
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -150,6 +157,7 @@ class InWork : Fragment() {
         // moving our cursor to next
         // position and appending values
         while(cursor.moveToNext()){
+            Log.i("btnInWork","zdes " + "ShowActuallyOrders "  + ConstantsDB.columnList[0])
             val zap = ZapisInDB( cursor.getString(0) ,
                 cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[0])),
                 cursor.getString(cursor.getColumnIndex(ConstantsDB.columnList[1])),
@@ -189,6 +197,7 @@ class InWork : Fragment() {
         cardItems.add(newCardItem)
         cardAdapter.notifyDataSetChanged()
     }
+
 
 
 
